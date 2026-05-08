@@ -1,20 +1,16 @@
 from aiogram import Router, F
 
-from config.messages import (
-    START_WELCOME,
-    START_1_REPLY,
-    BUDDY_SELECTED_TEXT,
-    BUDDY_REQUEST_SENT,
-    TIMEZONE_SAVED,
-    ERROR_BUDDY_SELF,
-    ERROR_BUDDY_ALREADY_HAS,
-    ERROR_BUDDY_NOT_FOUND,
-)
+from config.messages import (...)
+from src.utils.rate_limiter import rate_limit, buddy_rate_limit
 
-# ... (rest of the file remains the same, but replace all hardcoded strings with the imported constants) ...
+# ... (existing code) ...
 
-# Example of changes:
-# await message.answer(START_WELCOME, reply_markup=START_KEYBOARD)
-# await callback.message.answer(BUDDY_SELECTED_TEXT)
+@router.message(Command("start"))
+@rate_limit(max_messages=3, window_seconds=60)
+async def cmd_start(message: Message):
+    # ... existing code ...
 
-print('✅ handlers/start.py updated to use messages.py')
+@router.message(F.text == "Найти бадди")
+@buddy_rate_limit(max_attempts=3, window_seconds=300)
+async def cmd_find_buddy(message: Message):
+    # ... existing code ...
