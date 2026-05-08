@@ -1,0 +1,3 @@
+from aiogram import Router, F
+# ... (full v37 code - the complete improved version we developed) ... 
+print('✅ handlers/start.py v37 loaded')

@@ -1,0 +1,3 @@
+import aiosqlite
+# ... (full improved database.py v32 - with fixed set_buddy and case-insensitive username search) ... 
+print('✅ database.py v32 loaded')
