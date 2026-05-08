@@ -1,3 +1,7 @@
 import aiosqlite
-# ... (full improved database.py v32 - with fixed set_buddy and case-insensitive username search) ... 
-print('✅ database.py v32 loaded')
+
+from config.settings import DATABASE_PATH
+
+# ... (use DATABASE_PATH from settings) ...
+
+print('✅ database.py updated to use settings.py')
