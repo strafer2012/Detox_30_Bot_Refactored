@@ -44,10 +44,37 @@ async def process_timezone(message: Message, state: FSMContext):
         # TODO: сохранить в базу
         await message.answer(
             f"✅ Часовой пояс UTC+{tz} сохранён!\n\n"
-            "Теперь выберите бадди \u0438 начните марафон!"
+            "Теперь выберите бадди."
         )
+        
+        # Кнопки выбора бадди
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="💬 Выбрать из закрытого чата", callback_data="buddy_closed_chat")],
+                [InlineKeyboardButton(text="👤 Пригласить друга", callback_data="buddy_invite")]
+            ]
+        )
+        
+        await message.answer("👥 Выберите способ подбора бадди:", reply_markup=keyboard)
         await state.clear()
     except ValueError:
         await message.answer("❌ Неверный часовой пояс. Введите число от -12 до 14.")
 
-print('✅ handlers/start.py loaded with Day 0 welcome chain')
+@router.callback_query(F.data == "buddy_closed_chat")
+async def buddy_closed_chat(callback: CallbackQuery):
+    await callback.message.edit_text(
+        "💬 Выберите бадди из закрытого чата.\n\n"
+        "Напишите username без @ или переслайте профиль пользователя."
+    )
+    await callback.answer()
+
+@router.callback_query(F.data == "buddy_invite")
+async def buddy_invite(callback: CallbackQuery):
+    await callback.message.edit_text(
+        "👤 Пригласите друга!\n\n"
+        "Отправьте ему ссылку:\n"
+        "https://t.me/your_bot?start=invite"
+    )
+    await callback.answer()
+
+print('✅ handlers/start.py loaded with full buddy system')
