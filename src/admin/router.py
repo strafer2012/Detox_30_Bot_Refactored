@@ -4,7 +4,14 @@ from aiogram.types import Message
 
 from config.settings import ADMIN_ID
 
+from .commands import user_management, stats, messaging
+
 router = Router()
+
+# Подключаем модули
+router.include_router(user_management.router)
+router.include_router(stats.router)
+router.include_router(messaging.router)
 
 
 def is_admin(user_id: int) -> bool:
@@ -17,19 +24,24 @@ async def cmd_adminhelp(message: Message):
         await message.answer("У вас нет прав.")
         return
     
-    help_text = '''КОМАНДЫ АДМИНА (Refactored v2)
+    help_text = '''🔧 КОМАНДЫ АДМИНА (Refactored v2)
 
 /adminhelp — это сообщение
-/version — версия
+/version — версия бота
 
-УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ:
-/setday, /settz, /settime, /ban, /unban, /reset, /user
+Пользователи:
+/user <id> — инфо о пользователе
+/setday <id> <day> — установить день
+/settz <id> <tz> — установить часовой пояс
 
-СТАТИСТИКА:
-/stats, /statsfull, /active, /inactive
+Статистика:
+/stats — краткая статистика
+/statsfull — полная статистика
+/active — активные пользователи
 
-ОТПРАВКА СООБЩЕНИЙ:
-/force_message, /replay, /next
+Сообщения:
+/force_message <id> <text> — принудительно отправить
+/replay <id> <text> — ответить пользователю
 
-Напишите /adminhelp для полного списка.''' 
+Напишите /adminhelp для обновления списка.'''
     await message.answer(help_text)
