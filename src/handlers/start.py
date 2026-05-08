@@ -1,24 +1,16 @@
 from aiogram import Router, F
-
-from config.messages import (
-    START_WELCOME,
-    START_1_REPLY,
-    BUDDY_SELECTED_TEXT,
-    BUDDY_REQUEST_SENT,
-    TIMEZONE_SAVED,
-    ERROR_BUDDY_SELF,
-    ERROR_BUDDY_ALREADY_HAS,
-    ERROR_BUDDY_NOT_FOUND,
-)
-
-from config.settings import ADMIN_ID, CLOSED_CHAT_LINK
-
-from database.database import get_user_id_by_username, set_buddy, add_points
-
-import aiosqlite
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 
 router = Router()
 
-# ... (rest of the file - the actual handlers code)
+@router.message(Command("start"))
+async def cmd_start(message: Message):
+    await message.answer("🚀 Добро пожаловать в Detox 30!\n\nНапиши /help для списка команд.")
 
-print('✅ handlers/start.py loaded with real imports')
+@router.message(Command("help"))
+async def cmd_help(message: Message):
+    await message.answer("📄 Доступные команды:\n/start - начать\n/help - помощь\n/stats - статистика")
+
+print('✅ handlers/start.py loaded successfully')
