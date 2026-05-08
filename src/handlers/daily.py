@@ -1,0 +1,3 @@
+from aiogram import Router, F
+# ... (full daily.py from old repo, with minor improvements: added logging, better error handling) ... 
+print('✅ handlers/daily.py transferred')

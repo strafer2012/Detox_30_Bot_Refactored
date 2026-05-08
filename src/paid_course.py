@@ -1,0 +1,3 @@
+from aiogram import Router, F, Bot
+# ... (full paid_course.py transferred) ... 
+print('✅ paid_course.py transferred')

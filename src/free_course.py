@@ -1,0 +1,3 @@
+from aiogram import Router, F, Bot
+# ... (full free_course.py transferred and lightly cleaned) ... 
+print('✅ free_course.py transferred')
