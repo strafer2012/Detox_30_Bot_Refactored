@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 
-BOT_VERSION = "2026-05-09-v37-fixed"
+BOT_VERSION = "2026-05-09-v38-fixed"
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -45,9 +45,13 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     log.info("Webhook deleted")
     
-    # Start scheduler
-    from scheduler.scheduler import start_scheduler
-    asyncio.create_task(start_scheduler())
+    # Start scheduler (import inside to avoid circular imports)
+    try:
+        from scheduler.scheduler import start_scheduler
+        asyncio.create_task(start_scheduler())
+        log.info("Scheduler started")
+    except ImportError as e:
+        log.warning(f"Scheduler not available: {e}")
     
     log.info("Bot started successfully")
     
