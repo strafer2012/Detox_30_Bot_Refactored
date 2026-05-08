@@ -8,8 +8,8 @@ services:
     env_file:
       - .env
     ports:
-      - "8080:8080"  # Health check
-      - "9090:9090"  # Prometheus metrics
+      - "8080:8080"
+      - "9090:9090"
     volumes:
       - ./logs:/app/logs
       - ./detox30.db:/app/detox30.db
@@ -24,7 +24,6 @@ services:
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
 
   grafana:
     image: grafana/grafana:latest
@@ -33,9 +32,7 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
-
-volumes:
-  prometheus_data:
-  grafana_data:
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/detox30-bot-dashboard.json

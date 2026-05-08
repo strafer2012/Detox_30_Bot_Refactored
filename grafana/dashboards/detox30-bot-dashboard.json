@@ -1,0 +1,47 @@
+{
+  "dashboard": {
+    "title": "Detox 30 Bot Monitoring",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "Active Users",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "bot_active_users"
+          }
+        ]
+      },
+      {
+        "title": "Messages Sent (per minute)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(bot_messages_sent_total[1m])"
+          }
+        ]
+      },
+      {
+        "title": "Errors by Type",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "bot_errors_total"
+          }
+        ]
+      },
+      {
+        "title": "Request Duration (p95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(bot_request_duration_seconds_bucket[5m]))"
+          }
+        ]
+      }
+    ]
+  }
+}

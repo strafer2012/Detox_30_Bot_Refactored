@@ -18,6 +18,7 @@
 - **Health check**: http://localhost:8080/health
 - **Prometheus**: http://localhost:9091
 - **Grafana**: http://localhost:3000 (admin/admin)
+  - Pre-configured dashboard: "Detox 30 Bot Monitoring"
 
 ## Quick Start
 
