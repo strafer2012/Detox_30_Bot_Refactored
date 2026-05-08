@@ -1,10 +1,14 @@
 import asyncio
 import datetime
 
-BOT_VERSION = "2026-05-08-v33-refactored"
+BOT_VERSION = "2026-05-08-v34-refactored"
+
+from config.logging import logger  # new structured logger
 
 from config.settings import BOT_TOKEN, ADMIN_ID
 
-# ... (update imports and use settings) ...
+logger.info(f"Bot starting | Version: {BOT_VERSION}")
 
-print(f"=== BOT STARTED | Version: {BOT_VERSION} | {datetime.datetime.now()} ===")
+# ... (rest of the file) ...
+
+logger.info("Bot started successfully")
