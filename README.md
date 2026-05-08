@@ -1,18 +1,14 @@
 # Detox 30 Bot — Refactored (v2)
 
-**admin.py разделён на модули** ✅
+**Phase 3 complete** ✅
 
-## Текущая структура
-```
-src/admin/
-├── __init__.py
-├── router.py              # главный роутер + /adminhelp
-├── commands/
-│   ├── user_management.py   # /setday, /settz, /ban...
-│   ├── messaging.py         # /force_message, /replay...
-│   ├── stats.py             # /stats, /active...
-│   └── settings.py          # /settime, /pause...
-└── utils.py
-```
+## Текущий статус
+- ✅ Правильная структура
+- ✅ messages.py + settings.py + Pydantic
+- ✅ Улучшенное логирование (loguru + Sentry)
+- ✅ Admin-модули с мощными командами
+- ✅ Базовые тесты (pytest)
 
-**Phase 2 complete.** Дальше — перенос остальных файлов и улучшения.
+**Next:** Полные тесты, CI/CD, production deploy
+
+**Old repo (untouched):** https://github.com/strafer2012/Detox_30_bot
