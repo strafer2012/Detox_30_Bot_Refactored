@@ -1,14 +1,14 @@
 # Detox 30 Bot — Refactored (v2)
 
-**Phase 3 complete** ✅
+**Phase 4 complete** ✅
 
 ## Текущий статус
 - ✅ Правильная структура
 - ✅ messages.py + settings.py + Pydantic
-- ✅ Улучшенное логирование (loguru + Sentry)
+- ✅ Улучшенное логирование
 - ✅ Admin-модули с мощными командами
-- ✅ Базовые тесты (pytest)
+- ✅ Тесты (pytest) — database, start, scheduler
 
-**Next:** Полные тесты, CI/CD, production deploy
+**Next:** CI/CD (GitHub Actions), production deploy
 
 **Old repo (untouched):** https://github.com/strafer2012/Detox_30_bot
