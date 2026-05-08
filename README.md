@@ -1,36 +1,41 @@
-# Detox 30 Bot - Refactored Version
+# Detox 30 Bot — Refactored (v2)
 
-**This is the clean, refactored version of the Detox 30 Telegram Bot.**
+**Clean architecture version** (старый репозиторий оставлен без изменений)
 
-The original repository (Detox_30_bot) remains untouched as requested.
+## ✅ Что уже сделано
+- ✅ Правильная структура проекта
+- ✅ handlers/start.py v37 (все баги исправлены)
+- ✅ database.py v32 (set_buddy и get_user_id_by_username улучшены)
+- ✅ bot.py и scheduler.py перенесены и легко чищены
 
-## Project Goals
-- Clean architecture
-- Proper folder structure
-- All bugs from v37 fixed
-- Better maintainability and scalability
-
-## Current Status
-- ✅ handlers/start.py (v37) - fully fixed with proper buddy username handling and "вы" style
-- ✅ database.py (v32) - improved set_buddy and get_user_id_by_username
-
-## Planned Structure
+## Структура проекта
 ```
-detox-30-bot-refactored/
-├── src/
-│   ├── bot.py
-│   ├── config/
-│   ├── handlers/
-│   ├── services/
-│   ├── database/
-│   └── scheduler/
-├── tests/
-├── .env.example
-├── requirements.txt
-└── README.md
+src/
+├── bot.py
+├── config/
+│   ├── settings.py
+│   └── messages.py          # все тексты бота
+├── handlers/
+│   ├── start.py             # v37
+│   └── daily.py
+├── services/
+│   ├── buddy_service.py
+│   └── points_service.py
+├── database/
+│   └── database.py          # v32
+├── scheduler/
+│   └── scheduler.py
+└── utils/
+
+.env.example
+requirements.txt
+Dockerfile
 ```
 
-## Next Steps
-We will gradually move and improve all files from the old project into this clean structure.
+## Следующие шаги
+1. Перенести все остальные файлы из старого проекта
+2. Разделить admin.py на несколько модулей
+3. Добавить .env + pydantic
+4. Улучшить логирование и error handling
 
-**Original repo (untouched):** https://github.com/strafer2012/Detox_30_bot
+**Ссылка на старый проект (без изменений):** https://github.com/strafer2012/Detox_30_bot
