@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 
-BOT_VERSION = "2026-05-09-v39-fixed"
+BOT_VERSION = "2026-05-10-v40-fixed"
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -10,8 +10,8 @@ from loguru import logger
 from config.settings import BOT_TOKEN, ADMIN_ID
 from config.logging import logger as log
 
-# Import handlers
-from handlers import start, daily
+# Import all handlers
+from handlers import start, daily, main_menu, buddy
 from admin import router as admin_router
 
 # Import monitoring
@@ -36,9 +36,11 @@ async def main():
     # Create dispatcher
     dp = Dispatcher(storage=MemoryStorage())
     
-    # Include routers
+    # Include ALL routers
     dp.include_router(start.router)
     dp.include_router(daily.router)
+    dp.include_router(main_menu.router)
+    dp.include_router(buddy.router)
     dp.include_router(admin_router)
     
     # Delete webhook
@@ -52,7 +54,7 @@ async def main():
             asyncio.create_task(scheduler_module.start_scheduler())
             log.info("Scheduler started")
         else:
-            log.warning("start_scheduler function not found in scheduler module")
+            log.warning("start_scheduler function not found")
     except Exception as e:
         log.warning(f"Scheduler error: {e}")
     
