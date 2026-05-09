@@ -1,11 +1,22 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
+import aiosqlite
+
+from config.settings import DATABASE_PATH
 
 router = Router()
 
 @router.message(Command("start"))
 async def cmd_start(message: Message):
+    # Автоматически создаём пользователя, если его нет
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        await db.execute("""
+            INSERT OR IGNORE INTO users (user_id, username, full_name, registration_date)
+            VALUES (?, ?, ?, CURRENT_DATE)
+        """, (message.from_user.id, message.from_user.username, message.from_user.full_name))
+        await db.commit()
+    
     text = "🚀 Добро пожаловать в Detox 30!\n\nПоздравляю! Вы зарегистрированы.\n\nВаш первый день марафона начнётся в ближайшие 08:00 по вашему времени.\n\nИспользуйте меню ниже: ⬇️"
     
     keyboard = InlineKeyboardMarkup(
@@ -24,4 +35,4 @@ async def cmd_start(message: Message):
     
     await message.answer(text, reply_markup=keyboard)
 
-print('✅ handlers/start.py loaded with welcome message')
+print('✅ handlers/start.py loaded with auto user creation')
