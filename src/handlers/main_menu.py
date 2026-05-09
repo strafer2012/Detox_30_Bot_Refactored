@@ -7,7 +7,7 @@ import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v57"
+MENU_VERSION = "v10h"
 
 router = Router()
 
@@ -21,10 +21,9 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="👥 Управление бадди", callback_data="buddy_management")],
         [InlineKeyboardButton(text="🌍 Часовой пояс", callback_data="timezone")],
         [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
-        [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
+        [InlineKeyboardButton(text="📢 Пригласиты друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Зактытая группа", callback_data="closed_group")],
         [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
-        [InlineKeyboardButton(text=f"🔄 v{MENU_VERSION}", callback_data="noop")],
     ]
 )
 
@@ -45,8 +44,6 @@ async def my_progress(callback: CallbackQuery):
         local_time = utc_now + timedelta(hours=tz)
         local_time_str = local_time.strftime("%H:%M")
         
-        unique_id = int(time.time() * 1000) % 10000
-        
         buddy_status = f"✅ Есть (@{buddy_id})" if buddy_id else "❌ Нет"
         paid_status = "✅ Оплачено" if is_paid else "❌ Бесплатный"
         
@@ -56,8 +53,7 @@ async def my_progress(callback: CallbackQuery):
         f"⭐ Баллов: {points or 0}\n"
         f"👥 Бадди: {buddy_status}\n"
         f"📆 Дней с бадди: 0\n"
-        f"💎 Статус: {paid_status}\n"
-        f"\n\n#{unique_id}"
+        f"💎 Статус: {paid_status}"
     else:
         text = "Пользователь не найден. Нажмите /start."
     

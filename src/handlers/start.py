@@ -5,7 +5,7 @@ import aiosqlite
 
 from config.settings import DATABASE_PATH
 
-MENU_VERSION = "v56"
+MENU_VERSION = "v10h"
 
 router = Router()
 
@@ -22,7 +22,6 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Зактытая группа", callback_data="closed_group")],
         [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
-        [InlineKeyboardButton(text=f"🔄 v{MENU_VERSION}", callback_data="noop")],
     ]
 )
 
