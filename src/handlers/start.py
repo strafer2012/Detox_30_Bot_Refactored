@@ -5,7 +5,7 @@ import aiosqlite
 
 from config.settings import DATABASE_PATH
 
-MENU_VERSION = "v45"
+MENU_VERSION = "v46"
 
 router = Router()
 
