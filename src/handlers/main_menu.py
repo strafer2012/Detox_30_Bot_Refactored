@@ -90,8 +90,8 @@ async def closed_group(callback: CallbackQuery):
 
 @router.callback_query(F.data == "support")
 async def support(callback: CallbackQuery):
-    text = "🚨 Поддержка:\n\nНапишите @strafer2012 или нажмите кнопку 'Связь с поддержкой'.")
+    text = "🚨 Поддержка:\n\nНапишите @strafer2012 или нажмите кнопку 'Связь с поддержкой'."
     await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
-print('✅ handlers/main_menu.py loaded with edit mode')
+print('✅ handlers/main_menu.py loaded with full functionality')
