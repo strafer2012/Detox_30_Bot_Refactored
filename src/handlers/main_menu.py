@@ -23,19 +23,27 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
 
 @router.callback_query(F.data == "my_progress")
 async def my_progress(callback: CallbackQuery):
-    text = "📊 Ваш прогресс:\n\nДень: 1/30\nБаллов: 0\nБадди: Хет"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "my_badges")
-async def my_badges(callback: CallbackQuery):
-    text = "🏆 Ваши бейджи:\n\nУ вас пока нет бейджей. Продолжайте марафон!"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "next_message")
-async def next_message(callback: CallbackQuery):
-    text = "🕐 Следующее сообщение:\n\nУтро: ~08:00\nОбразование: ~14:00\nВечер: ~20:30\n\nВаш часовой пояс: UTC+7"
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        cursor = await db.execute(
+            "SELECT current_day, points, buddy_id, is_paid FROM users WHERE user_id = ?",
+            (callback.from_user.id,)
+        )
+        row = await cursor.fetchone()
+    
+    if row:
+        day, points, buddy_id, is_paid = row
+        buddy_status = f"✅ Есть (@{buddy_id})" if buddy_id else "❌ Нет"
+        paid_status = "✅ Оплачено" if is_paid else "❌ Бесплатный"
+        
+        text = f"📊 Ваш прогресс\n\n"
+        f"📅 День: {day or 1}/30\n"
+        f"⭐ Баллов: {points or 0}\n"
+        f"👥 Бадди: {buddy_status}\n"
+        f"📆 Дней с бадди: 0\n"
+        f"💎 Статус: {paid_status}"
+    else:
+        text = "Пользователь не найден."
+    
     await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
@@ -79,27 +87,9 @@ async def process_new_timezone(message: Message, state: FSMContext):
     except ValueError:
         await message.answer("❌ Неверный часовой пояс.")
 
-@router.callback_query(F.data == "pay_marathon")
-async def pay_marathon(callback: CallbackQuery):
-    text = "💳 Оплатить марафона (999₽):\n\nhttps://t.me/tribute/app?startapp=sUcf"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "invite_friend")
-async def invite_friend(callback: CallbackQuery):
-    text = "📢 Пригласить друга: просто перешлите ему @Detox_30_bot"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "closed_group")
-async def closed_group(callback: CallbackQuery):
-    text = "🔒 Закрытая группа: https://t.me/+6usILTSdMQIwMGU6"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
 @router.callback_query(F.data == "support")
 async def support(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("🚨 Отправьте сообщение, мы ответим в течение 12 часов ⬇️")
+    await callback.message.edit_text("🚨 Отправьте сообщение, мы ответим в течение 12 часов ⬇️", reply_markup=MAIN_MENU_KEYBOARD)
     await state.set_state("waiting_support_message")
     await callback.answer()
 
@@ -115,4 +105,4 @@ async def process_support_message(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка.")
     await state.clear()
 
-print('✅ handlers/main_menu.py loaded successfully')
+print('✅ handlers/main_menu.py loaded with all requirements')
