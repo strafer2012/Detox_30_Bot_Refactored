@@ -17,7 +17,7 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Закрытая группа", callback_data="closed_group")],
-        [InlineKeyboardButton(text="🚨 Поддержка", callback_data="support")],
+        [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
     ]
 )
 
@@ -58,8 +58,7 @@ async def keep_timezone(callback: CallbackQuery):
 
 @router.callback_query(F.data == "change_timezone")
 async def change_timezone(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("🌍 Введите новый часовой пояс (UTC):
-\nНапример: 3, 7, 10")
+    await callback.message.edit_text("🌍 Введите новый часовой пояс (UTC):\n\nНапример: 3, 7, 10")
     await state.set_state("waiting_new_timezone")
     await callback.answer()
 
