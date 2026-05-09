@@ -17,7 +17,7 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Закрытая группа", callback_data="closed_group")],
-        [InlineKeyboardButton(text="🚨 Поддержка", callback_data="support")],
+        [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
     ]
 )
 
