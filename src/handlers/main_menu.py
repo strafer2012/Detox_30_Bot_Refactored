@@ -7,7 +7,7 @@ import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v54"
+MENU_VERSION = "v55"
 
 router = Router()
 
