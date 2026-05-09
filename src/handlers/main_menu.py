@@ -1,11 +1,26 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.fsm.context import FSMContext
 import aiosqlite
 
 from config.settings import DATABASE_PATH
 
 router = Router()
+
+MAIN_MENU_TEXT = "🎯 Главное меню:"
+
+MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="📊 Мой прогресс", callback_data="my_progress")],
+        [InlineKeyboardButton(text="🏆 Мои бейджи", callback_data="my_badges")],
+        [InlineKeyboardButton(text="🕐 Следующее сообщение", callback_data="next_message")],
+        [InlineKeyboardButton(text="👥 Управление бадди", callback_data="buddy_management")],
+        [InlineKeyboardButton(text="🌍 Часовой пояс", callback_data="timezone")],
+        [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
+        [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
+        [InlineKeyboardButton(text="🔒 Закрытая группа", callback_data="closed_group")],
+        [InlineKeyboardButton(text="🚨 Поддержка", callback_data="support")],
+    ]
+)
 
 @router.callback_query(F.data == "my_progress")
 async def my_progress(callback: CallbackQuery):
@@ -24,9 +39,9 @@ async def my_progress(callback: CallbackQuery):
         f"🌍 Часовой пояс: UTC+{tz or 7}\n"
         f"🏅 Позиция в рейтинге: ТОП-50"
     else:
-        text = "Пользователь не найден. Нажмите /start."
+        text = "Пользователь не найден."
     
-    await callback.message.edit_text(text)
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "my_badges")
@@ -37,7 +52,7 @@ async def my_badges(callback: CallbackQuery):
     f"🥉 100 баллов\n"
     f"🎖️ 30 дней марафона"
     
-    await callback.message.edit_text(text)
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "next_message")
@@ -46,32 +61,37 @@ async def next_message(callback: CallbackQuery):
     f"Образовательный блок (14:00)\n"
     f"Осталось: 2ч 17мин"
     
-    await callback.message.edit_text(text)
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "timezone")
 async def timezone(callback: CallbackQuery):
-    await callback.message.edit_text("🌍 Ваш часовой пояс: UTC+7\n\nНажмите /start и выберите 'Часовой пояс' для изменения.")
+    text = "🌍 Ваш часовой пояс: UTC+7\n\nНажмите /start и выберите 'Часовой пояс' для изменения."
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "pay_marathon")
 async def pay_marathon(callback: CallbackQuery):
-    await callback.message.edit_text("💳 Оплата марафона (999₽):\n\nНажмите кнопку ниже для оплаты.")
+    text = "💳 Оплата марафона (999₽):\n\nНажмите кнопку ниже для оплаты."
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "invite_friend")
 async def invite_friend(callback: CallbackQuery):
-    await callback.message.edit_text("📢 Пригласить друга:\n\nhttps://t.me/your_bot?start=invite")
+    text = "📢 Пригласить друга:\n\nhttps://t.me/your_bot?start=invite"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "closed_group")
 async def closed_group(callback: CallbackQuery):
-    await callback.message.edit_text("🔒 Закрытая группа:\n\nhttps://t.me/+your_closed_group_link")
+    text = "🔒 Закрытая группа:\n\nhttps://t.me/+your_closed_group_link"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
 @router.callback_query(F.data == "support")
 async def support(callback: CallbackQuery):
-    await callback.message.edit_text("🚨 Поддержка:\n\nНапишите @strafer2012 или нажмите кнопку 'Связь с поддержкой'.")
+    text = "🚨 Поддержка:\n\nНапишите @strafer2012 или нажмите кнопку 'Связь с поддержкой'.")
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
-print('✅ handlers/main_menu.py loaded with full functionality')
+print('✅ handlers/main_menu.py loaded with edit mode')
