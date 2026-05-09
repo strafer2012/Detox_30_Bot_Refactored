@@ -6,8 +6,6 @@ from config.settings import DATABASE_PATH
 
 router = Router()
 
-MAIN_MENU_TEXT = "🎯 Главное меню:"
-
 MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="📊 Мой прогресс", callback_data="my_progress")],
@@ -18,80 +16,67 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Закрытая группа", callback_data="closed_group")],
-        [InlineKeyboardButton(text="🚨 Поддержка", callback_data="support")],
+        [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
     ]
 )
 
-@router.callback_query(F.data == "my_progress")
-async def my_progress(callback: CallbackQuery):
+@router.callback_query(F.data == "timezone")
+async def timezone_menu(callback: CallbackQuery):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute(
-            "SELECT current_day, points, timezone FROM users WHERE user_id = ?",
+            "SELECT timezone FROM users WHERE user_id = ?",
             (callback.from_user.id,)
         )
         row = await cursor.fetchone()
     
-    if row:
-        day, points, tz = row
-        text = f"📊 Ваш прогресс:\n\n"
-        f"📅 День: {day or 0} / 30\n"
-        f"🏆 Баллов: {points or 0}\n"
-        f"🌍 Часовой пояс: UTC+{tz or 7}\n"
-        f"🏅 Позиция в рейтинге: ТОП-50"
-    else:
-        text = "Пользователь не найден."
+    tz = row[0] if row else 7
     
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "my_badges")
-async def my_badges(callback: CallbackQuery):
-    text = "🏆 Ваши бейджи:\n\n"
-    f"🥇 Первый шаг\n"
-    f"🥈 7 дней подряд\n"
-    f"🥉 100 баллов\n"
-    f"🎖️ 30 дней марафона"
+    text = f"🌍 Ваш текущий часовой пояс: UTC+{tz}"
     
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "next_message")
-async def next_message(callback: CallbackQuery):
-    text = "🕐 Следующее сообщение:\n\n"
-    f"Образовательный блок (14:00)\n"
-    f"Осталось: 2ч 17мин"
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="✅ Оставить", callback_data="keep_timezone")],
+            [InlineKeyboardButton(text="✏️ Изменить", callback_data="change_timezone")]
+        ]
+    )
     
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.message.edit_text(text, reply_markup=keyboard)
     await callback.answer()
 
-@router.callback_query(F.data == "timezone")
-async def timezone(callback: CallbackQuery):
-    text = "🌍 Ваш часовой пояс: UTC+7\n\nНажмите /start и выберите 'Часовой пояс' для изменения."
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+@router.callback_query(F.data == "keep_timezone")
+async def keep_timezone(callback: CallbackQuery):
+    await callback.message.edit_text("✅ Часовой пояс оставлен.", reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
-@router.callback_query(F.data == "pay_marathon")
-async def pay_marathon(callback: CallbackQuery):
-    text = "💳 Оплата марафона (999₽):\n\nНажмите кнопку ниже для оплаты."
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+@router.callback_query(F.data == "change_timezone")
+async def change_timezone(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_text("🌍 Введите новый часовой пояс (UTC):
+\nНапример: 3 (Москва), 7 (Красноярск), 10 (Владивосток)")
+    await state.set_state("waiting_new_timezone")
     await callback.answer()
 
-@router.callback_query(F.data == "invite_friend")
-async def invite_friend(callback: CallbackQuery):
-    text = "📢 Пригласить друга:\n\nhttps://t.me/your_bot?start=invite"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
+@router.message(F.text.regexp(r"^-?\d{1,2}$"))
+async def process_new_timezone(message: Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state != "waiting_new_timezone":
+        return
+    
+    try:
+        tz = int(message.text)
+        if not -12 <= tz <= 14:
+            raise ValueError
+        
+        async with aiosqlite.connect(DATABASE_PATH) as db:
+            await db.execute(
+                "UPDATE users SET timezone = ? WHERE user_id = ?",
+                (tz, message.from_user.id),
+            )
+            await db.commit()
+        
+        await message.answer(
+            f"✅ Часовой пояс изменен на UTC+{tz}!")
+        await state.clear()
+    except ValueError:
+        await message.answer("❌ Неверный часовой пояс. Введите число от -12 до 14.")
 
-@router.callback_query(F.data == "closed_group")
-async def closed_group(callback: CallbackQuery):
-    text = "🔒 Закрытая группа:\n\nhttps://t.me/+your_closed_group_link"
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-@router.callback_query(F.data == "support")
-async def support(callback: CallbackQuery):
-    text = "🚨 Поддержка:\n\nНапишите @strafer2012 или нажмите кнопку 'Связь с поддержкой'."
-    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
-    await callback.answer()
-
-print('✅ handlers/main_menu.py loaded with full functionality')
+print('✅ handlers/main_menu.py loaded with timezone menu')
