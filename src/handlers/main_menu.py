@@ -7,7 +7,7 @@ import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v43"
+MENU_VERSION = "v44"
 
 router = Router()
 
@@ -23,7 +23,7 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Зактытая группа", callback_data="closed_group")],
-        [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
+        [InlineKeyboardButton(text="🚨 Поддержка", callback_data="support")],
         [InlineKeyboardButton(text=f"🔄 v{MENU_VERSION}", callback_data="noop")],
     ]
 )
@@ -45,7 +45,6 @@ async def my_progress(callback: CallbackQuery):
         local_time = utc_now + timedelta(hours=tz)
         local_time_str = local_time.strftime("%H:%M")
         
-        # Добавляем уникальный timestamp, чтобы избежать "message is not modified"
         unique_id = int(time.time() * 1000) % 10000
         
         buddy_status = f"✅ Есть (@{buddy_id})" if buddy_id else "❌ Нет"
@@ -97,7 +96,7 @@ async def closed_group(callback: CallbackQuery):
 
 @router.callback_query(F.data == "support")
 async def support(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("🚨 Отравьте сообщение, мы ответим в течение 12 часов ⬇️", reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.message.edit_text("🚨 Отправьте сообщение, мы ответим в течение 12 часов ⬇️", reply_markup=MAIN_MENU_KEYBOARD)
     await state.set_state("waiting_support_message")
     await callback.answer()
 
