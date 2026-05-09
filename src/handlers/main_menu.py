@@ -35,7 +35,6 @@ async def my_progress(callback: CallbackQuery):
         day, points, buddy_id, is_paid, tz = row
         tz = tz or 7
         
-        # Локальное время пользователя
         utc_now = datetime.utcnow()
         local_time = utc_now + timedelta(hours=tz)
         local_time_str = local_time.strftime("%H:%M")
@@ -56,4 +55,52 @@ async def my_progress(callback: CallbackQuery):
     await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
-print('✅ handlers/main_menu.py loaded with local time')
+@router.callback_query(F.data == "my_badges")
+async def my_badges(callback: CallbackQuery):
+    text = "🏆 Ваши бейджи:\n\nУ вас пока нет бейджей. Продолжайте марафон!"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.answer()
+
+@router.callback_query(F.data == "next_message")
+async def next_message(callback: CallbackQuery):
+    text = "🕐 Следующее сообщение:\n\nУтро: ~08:00\nОбразование: ~14:00\nВечер: ~20:30\n\nВаш часовой пояс: UTC+7"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.answer()
+
+@router.callback_query(F.data == "pay_marathon")
+async def pay_marathon(callback: CallbackQuery):
+    text = "💳 Оплатить марафона (999₽):\n\nhttps://t.me/tribute/app?startapp=sUcf"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.answer()
+
+@router.callback_query(F.data == "invite_friend")
+async def invite_friend(callback: CallbackQuery):
+    text = "📢 Пригласить друга: просто перешлите ему @Detox_30_bot"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.answer()
+
+@router.callback_query(F.data == "closed_group")
+async def closed_group(callback: CallbackQuery):
+    text = "🔒 Закрытая группа: https://t.me/+6usILTSdMQIwMGU6"
+    await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
+    await callback.answer()
+
+@router.callback_query(F.data == "support")
+async def support(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_text("🚨 Отправьте сообщение, мы ответим в течение 12 часов ⬇️", reply_markup=MAIN_MENU_KEYBOARD)
+    await state.set_state("waiting_support_message")
+    await callback.answer()
+
+@router.message(F.text)
+async def process_support_message(message: Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state != "waiting_support_message":
+        return
+    try:
+        await message.bot.send_message(ADMIN_ID, f"🚨 Сообщение от {message.from_user.id}:\n\n{message.text}")
+        await message.answer("✅ Сообщение отправлено!")
+    except:
+        await message.answer("❌ Ошибка.")
+    await state.clear()
+
+print('✅ handlers/main_menu.py loaded successfully')
