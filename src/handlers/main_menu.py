@@ -7,7 +7,7 @@ import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v50"
+MENU_VERSION = "v51"
 
 router = Router()
 
@@ -59,7 +59,7 @@ async def my_progress(callback: CallbackQuery):
         f"💎 Статус: {paid_status}\n"
         f"\n\n#{unique_id}"
     else:
-        text = "Пользователь не найден. Нажмите /start."
+        text = "Пользователь не найден. Назмите /start."
     
     await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
