@@ -3,10 +3,11 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.fsm.context import FSMContext
 import aiosqlite
 from datetime import datetime, timedelta
+import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v42"
+MENU_VERSION = "v43"
 
 router = Router()
 
@@ -44,6 +45,9 @@ async def my_progress(callback: CallbackQuery):
         local_time = utc_now + timedelta(hours=tz)
         local_time_str = local_time.strftime("%H:%M")
         
+        # Добавляем уникальный timestamp, чтобы избежать "message is not modified"
+        unique_id = int(time.time() * 1000) % 10000
+        
         buddy_status = f"✅ Есть (@{buddy_id})" if buddy_id else "❌ Нет"
         paid_status = "✅ Оплачено" if is_paid else "❌ Бесплатный"
         
@@ -53,9 +57,10 @@ async def my_progress(callback: CallbackQuery):
         f"⭐ Баллов: {points or 0}\n"
         f"👥 Бадди: {buddy_status}\n"
         f"📆 Дней с бадди: 0\n"
-        f"💎 Статус: {paid_status}"
+        f"💎 Статус: {paid_status}\n"
+        f"\n\n#{unique_id}"
     else:
-        text = "Пользователь не найден. Назмите /start."
+        text = "Пользователь не найден. Нажмите /start."
     
     await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
