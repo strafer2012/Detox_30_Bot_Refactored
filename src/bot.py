@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 
-BOT_VERSION = "2026-05-10-v40-fixed"
+BOT_VERSION = "2026-05-10-v41-routers-connected"
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -10,13 +10,22 @@ from loguru import logger
 from config.settings import BOT_TOKEN, ADMIN_ID
 from config.logging import logger as log
 
-# Import all handlers
-from handlers import start, daily, main_menu, buddy
-from admin import router as admin_router
+# Import all handlers from src/handlers
+try:
+    from src.handlers import start, daily, main_menu, buddy
+    from src.handlers.admin import router as admin_router
+except ImportError:
+    # Fallback for different structure
+    from handlers import start, daily, main_menu, buddy
+    from handlers.admin import router as admin_router
 
 # Import monitoring
-from monitoring.health_server import start_health_server
-from monitoring.metrics import start_prometheus_server
+try:
+    from src.monitoring.health_server import start_health_server
+    from src.monitoring.metrics import start_prometheus_server
+except ImportError:
+    from monitoring.health_server import start_health_server
+    from monitoring.metrics import start_prometheus_server
 
 bot = Bot(token=BOT_TOKEN)
 
@@ -29,7 +38,10 @@ async def main():
     start_prometheus_server(port=9090)
     
     # Initialize database
-    from database.database import init_db, migrate_database
+    try:
+        from src.database.database import init_db, migrate_database
+    except ImportError:
+        from database.database import init_db, migrate_database
     await init_db()
     await migrate_database()
     
@@ -49,12 +61,9 @@ async def main():
     
     # Start scheduler
     try:
-        import scheduler.scheduler as scheduler_module
-        if hasattr(scheduler_module, 'start_scheduler'):
-            asyncio.create_task(scheduler_module.start_scheduler())
-            log.info("Scheduler started")
-        else:
-            log.warning("start_scheduler function not found")
+        from src.scheduler.scheduler import start_scheduler
+        asyncio.create_task(start_scheduler())
+        log.info("Scheduler started")
     except Exception as e:
         log.warning(f"Scheduler error: {e}")
     
