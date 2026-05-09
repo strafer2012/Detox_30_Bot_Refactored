@@ -7,7 +7,7 @@ import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v48"
+MENU_VERSION = "v49"
 
 router = Router()
 
@@ -22,7 +22,7 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="🌍 Часовой пояс", callback_data="timezone")],
         [InlineKeyboardButton(text="💳 Оплатить марафон (999₽)", callback_data="pay_marathon")],
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
-        [InlineKeyboardButton(text="🔒 Зактытая группа", callback_data="closed_group")],
+        [InlineKeyboardButton(text="🔒 Закрытая группа", callback_data="closed_group")],
         [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
         [InlineKeyboardButton(text=f"🔄 v{MENU_VERSION}", callback_data="noop")],
     ]
@@ -90,7 +90,7 @@ async def invite_friend(callback: CallbackQuery):
 
 @router.callback_query(F.data == "closed_group")
 async def closed_group(callback: CallbackQuery):
-    text = "🔒 Зактытая группа: https://t.me/+6usILTSdMQIwMGU6"
+    text = "🔒 Закрытая группа: https://t.me/+6usILTSdMQIwMGU6"
     await callback.message.edit_text(text, reply_markup=MAIN_MENU_KEYBOARD)
     await callback.answer()
 
