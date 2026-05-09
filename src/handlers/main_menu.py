@@ -7,7 +7,7 @@ import time
 
 from config.settings import DATABASE_PATH, ADMIN_ID
 
-MENU_VERSION = "v56"
+MENU_VERSION = "v57"
 
 router = Router()
 
@@ -28,7 +28,7 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
     ]
 )
 
-@router.callback_query(F.data == "my_progress
+@router.callback_query(F.data == "my_progress")
 async def my_progress(callback: CallbackQuery):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute(
