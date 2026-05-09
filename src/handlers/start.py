@@ -5,7 +5,11 @@ import aiosqlite
 
 from config.settings import DATABASE_PATH
 
+MENU_VERSION = "v45"
+
 router = Router()
+
+print(f'✅ handlers/start.py loaded | Version: {MENU_VERSION}')
 
 MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -18,7 +22,7 @@ MAIN_MENU_KEYBOARD = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="📢 Пригласить друга", callback_data="invite_friend")],
         [InlineKeyboardButton(text="🔒 Зактытая группа", callback_data="closed_group")],
         [InlineKeyboardButton(text="🚨 Поддерзка", callback_data="support")],
-        [InlineKeyboardButton(text="🔄 v42", callback_data="noop")],
+        [InlineKeyboardButton(text=f"🔄 v{MENU_VERSION}", callback_data="noop")],
     ]
 )
 
@@ -35,4 +39,4 @@ async def cmd_start(message: Message):
     
     await message.answer(text, reply_markup=MAIN_MENU_KEYBOARD)
 
-print('✅ handlers/start.py loaded with v42 menu')
+print('✅ handlers/start.py loaded successfully')
