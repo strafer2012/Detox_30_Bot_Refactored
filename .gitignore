@@ -21,28 +21,38 @@ wheels/
 *.egg
 
 # Virtual environments
-.env
-.venv
-env/
 venv/
 ENV/
-env.bak/
-venv.bak/
+env/
+.venv/
 
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 
+# Environment
+.env
+.env.local
+.env.*.local
+
 # Logs
+logs/
 *.log
-bot.log
 
 # Database
 *.db
 *.sqlite
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Temporary
+tmp/
+temp/

@@ -5,3 +5,5 @@ scrape_configs:
   - job_name: 'detox30-bot'
     static_configs:
       - targets: ['bot:9090']
+    metrics_path: '/metrics'
+    scrape_interval: 5s

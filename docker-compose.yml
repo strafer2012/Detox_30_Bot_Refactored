@@ -7,32 +7,33 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "8080:8080"
-      - "9090:9090"
     volumes:
       - ./logs:/app/logs
-      - ./detox30.db:/app/detox30.db
+      - ./detox30.db:/app/detox30.db  # persist DB
+    ports:
+      - "8080:8080"  # health
+      - "9090:9090"  # prometheus
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9091:9090"
+    container_name: detox30-prometheus
+    restart: unless-stopped
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
+    ports:
+      - "9091:9090"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/detox30-bot-dashboard.json
+volumes:
+  prometheus_data:
