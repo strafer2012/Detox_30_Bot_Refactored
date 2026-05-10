@@ -135,7 +135,7 @@ async def decline_buddy(callback: CallbackQuery):
     await callback.message.edit_text("❌ Запрос отклонён.")
     await callback.answer()
 
-# ====================== РАЗОРВАТЬ СВЯЗЬ ======================
+# ====================== РАзОРВАТь СВЯЗЬ ======================
 @router.callback_query(F.data == "break_buddy")
 async def break_buddy_connection(callback: CallbackQuery):
     result = await break_buddy_pair(callback.from_user.id)
