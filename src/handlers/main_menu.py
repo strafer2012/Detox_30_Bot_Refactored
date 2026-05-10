@@ -8,7 +8,7 @@ from database import get_user, get_active_buddy, get_buddy_username
 logger = logging.getLogger(__name__)
 router = Router()
 
-# ====================== ГЛАВНОЕ МЕНЮ ======================
+# ====================== ГЛАВНОЕ МЕНю ======================
 MAIN_MENU = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="📊 Мой прогресс", callback_data="my_progress")],
     [InlineKeyboardButton(text="👥 Бадди", callback_data="menu_buddy")],
@@ -76,7 +76,7 @@ async def pay_marathon(callback: CallbackQuery):
 
 @router.callback_query(F.data == "invite_friend")
 async def invite_friend(callback: CallbackQuery):
-    text = "📢 Пригласить друга:\nПросто перешли ему @Detox_30_bot"
+    text = "📢 Пригласить друга:\nПросто переди ему @Detox_30_bot"
     await callback.message.edit_text(text, reply_markup=MAIN_MENU)
     await callback.answer()
 

@@ -139,7 +139,7 @@ async def cmd_ban(message: Message):
         return
     
     # Добавь в database.py функцию ban_user если нет
-    await message.answer(f"⛔ Пользователь {user_id} заблокирован (TODO: добавь в базу)")
+    await message.answer(f"⛔ Пользователь {user_id} заблокирован (ТОДО: добавь в базу)")
 
 @router.message(Command("unban"))
 async def cmd_unban(message: Message):
@@ -152,7 +152,7 @@ async def cmd_unban(message: Message):
         await message.answer("❌ Используй: /unban <user_id>")
         return
     
-    await message.answer(f"✅ Пользователь {user_id} разблокирован (TODO)")
+    await message.answer(f"✅ Пользователь {user_id} разблокирован (ТОДО)")
 
 # ====================== /SETTIME <ID> <OFFSET> ======================
 @router.message(Command("settime"))
@@ -169,6 +169,6 @@ async def cmd_settime(message: Message):
         return
     
     await update_user_timezone(user_id, offset)
-    await message.answer(f"✅ Часовой пояс пользователя {user_id} изменён на UTC{offset:+d}")
+    await message.answer(f"✅ Часовой пояс пользователя {user_id} изменен на UTC{offset:+d}")
 
 print("✅ src/handlers/admin.py загружен (Refactored v1 - полное админ-меню)")

@@ -92,23 +92,23 @@ async def init_db():
 
 
 async def migrate_database():
-    print("Запуск миграции базы данных...")
+    print("\u0417\u0430\u043f\u0443\u0441\u043a \u043c\u0438\u0433\u0440\u0430\u0446\u0438\u0438 \u0431\u0430\u0437\u044b \u0434\u0430\u043d\u043d\u044b\u0445...")
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute("PRAGMA table_info(users)")
         columns = [row[1] for row in await cursor.fetchall()]
         
         if 'paid_date' not in columns:
             await db.execute("ALTER TABLE users ADD COLUMN paid_date TIMESTAMP")
-            print("Добавлена колонка paid_date")
+            print("\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430 \u043a\u043e\u043b\u043e\u043d\u043a\u0430 paid_date")
         
         if 'expires_at' not in [row[1] for row in await (await db.execute("PRAGMA table_info(buddy_requests)")).fetchall()]:
             await db.execute("ALTER TABLE buddy_requests ADD COLUMN expires_at TIMESTAMP")
         
         await db.commit()
-    print("Миграция завершена")
+    print("\u041c\u0438\u0433\u0440\u0430\u0446\u0438\u044f \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0430")
 
 
-# ====================== ОСНОВНЫЕ ФУНКЦИИ ======================
+# ====================== \u041e\u0421\u041d\u041e\u0412\u041d\u042b\u0415 \u0424\u0423\u041d\u041a\u0426\u0418\u0418 ======================
 async def add_user(user_id: int, username: str = None, full_name: str = None):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         await db.execute(
@@ -149,7 +149,7 @@ async def add_points(user_id: int, amount: int, reason: str = ""):
         await db.commit()
 
 
-# ====================== БАДДИ СИСТЕМА ======================
+# ====================== \u0411\u0410\u0414\u0414\u0418 \u0421\u0418\u0421\u0422\u0415\u041c\u0410 ======================
 async def create_buddy_request(requester_id: int, target_id: int) -> bool:
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute(
@@ -194,14 +194,14 @@ async def accept_buddy_request(request_id: int, target_id: int) -> dict:
         )
         row = await cursor.fetchone()
         if not row:
-            return {"success": False, "error": "Запрос не найден"}
+            return {"success": False, "error": "\u0417\u0430\u043f\u0440\u043e\u0441 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d"}
         
         requester_id = row[0]
         
         cursor = await db.execute("SELECT buddy_id FROM users WHERE user_id IN (?, ?)", (requester_id, target_id))
         buddies = await cursor.fetchall()
         if any(b[0] for b in buddies):
-            return {"success": False, "error": "У одного из пользователей уже есть бадди"}
+            return {"success": False, "error": "\u0423 \u043e\u0434\u043d\u043e\u0433\u043e \u0438\u0437 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439 \u0443\u0436\u0435 \u0435\u0441\u0442\u044c \u0431\u0430\u0434\u0434\u0438"}
         
         await db.execute("UPDATE buddy_requests SET status = 'accepted' WHERE id = ?", (request_id,))
         await db.execute("UPDATE users SET buddy_id = ? WHERE user_id = ?", (target_id, requester_id))
@@ -325,7 +325,7 @@ async def break_buddy_pair(user_id: int):
 
 
 async def get_user_by_username(username: str):
-    """Находит пользователя по username (case-insensitive). Добавлено для buddy.py"""
+    """\u041d\u0430\u0445\u043e\u0434\u0438\u0442 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u043f\u043e username (case-insensitive). \u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u0434\u043b\u044f buddy.py"""
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute(
             "SELECT * FROM users WHERE LOWER(username) = LOWER(?)",
@@ -341,7 +341,7 @@ async def get_user_by_username(username: str):
         return None
 
 
-# ====================== ОТЧЁТЫ ======================
+# ====================== \u041e\u0422\u0427\u0401\u0422\u042b ======================
 async def save_report(user_id: int, day: int, message: str):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         await db.execute(
@@ -372,7 +372,7 @@ async def is_report_verified(report_id: int) -> bool:
         return bool(row and row[0] == 1)
 
 
-# ====================== TRIBUTE / ОПЛАТА ======================
+# ====================== TRIBUTE / \u041e\u041f\u041b\u0410\u0422\u0410 ======================
 async def mark_user_paid(user_id: int):
     try:
         async with aiosqlite.connect(DATABASE_PATH) as db:
@@ -381,10 +381,10 @@ async def mark_user_paid(user_id: int):
                 (user_id,)
             )
             await db.commit()
-        logger.info(f"✅ Пользователь {user_id} успешно оплачен (Tribute)")
+        logger.info(f"\u2705 \u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c {user_id} \u0443\u0441\u043f\u0435\u0448\u043d\u043e \u043e\u043f\u043b\u0430\u0447\u0435\u043d (Tribute)")
         return True
     except Exception as e:
-        logger.error(f"❌ Ошибка mark_user_paid для {user_id}: {e}")
+        logger.error(f"\u274c \u041e\u0448\u0438\u0431\u043a\u0430 mark_user_paid \u0434\u043b\u044f {user_id}: {e}")
         return False
 
 
@@ -398,12 +398,12 @@ async def get_user_paid_status(user_id: int) -> dict:
     }
 
 
-# ====================== АДМИН ФУНКЦИИ ======================
+# ====================== \u0410\u0414\u041c\u0418\u041d \u0424\u0423\u041d\u041a\u0426\u0418\u0418 ======================
 async def check_and_award_achievements(user_id: int):
     return True
 
 
-# ====================== ДРУГИЕ ФУНКЦИИ ======================
+# ====================== \u0414\u0420\u0423\u0413\u0418\u0415 \u0424\u0423\u041d\u041a\u0426\u0418\u0418 ======================
 async def save_support_request(user_id: int, username: str, message: str):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         await db.execute(
@@ -434,4 +434,4 @@ async def get_rating_report(limit: int = 20):
         return await cursor.fetchall()
 
 
-print("✅ database.py updated for Detox_30_Bot_Refactored (added get_user_by_username + fixed import for src.config.settings)")
+print("\u2705 database.py updated for Detox_30_Bot_Refactored (added get_user_by_username + fixed import for src.config.settings)")
