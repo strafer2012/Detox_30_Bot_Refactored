@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 
-BOT_VERSION = "2026-05-10-v41-routers-connected"
+BOT_VERSION = "2026-05-10-v42-full-handlers-connected"
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.fsm.storage.memory import MemoryStorage
